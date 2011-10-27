@@ -18,7 +18,7 @@ add_definitions(
     
 )
 
-
+find_library(OPENNI_LIBRARY OpenNI)
 SOURCE_GROUP(Mac FILES ${PLATFORM})
 
 set (SOURCES
@@ -35,4 +35,7 @@ add_mac_plugin(${PROJECT_NAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJECT_NAME}
     ${PLUGIN_INTERNAL_DEPS}
+    )
+target_link_libraries(${PROJECT_NAME}
+    ${OPENNI_LIBRARY}
     )

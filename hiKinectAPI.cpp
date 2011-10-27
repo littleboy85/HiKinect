@@ -11,20 +11,29 @@
 
 #include "hiKinectAPI.h"
 
+
 ///////////////////////////////////////////////////////////////////////////////
-/// @fn hiKinectAPI::hiKinectAPI(const hiKinectPtr& plugin, const FB::BrowserHostPtr host)
+/// @fn hiKinectAPI::hiKinectAPI(const hiKinectPtr& plugin,
+//                               const FB::BrowserHostPtr host)
 ///
-/// @brief  Constructor for your JSAPI object.  You should register your methods, properties, and events
+/// @brief  Constructor for your JSAPI object.  You should register your
+//          methods, properties, and events
 ///         that should be accessible to Javascript from here.
 ///
 /// @see FB::JSAPIAuto::registerMethod
 /// @see FB::JSAPIAuto::registerProperty
 /// @see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
-hiKinectAPI::hiKinectAPI(const hiKinectPtr& plugin, const FB::BrowserHostPtr& host) : m_plugin(plugin), m_host(host)
-{
+hiKinectAPI::hiKinectAPI(const hiKinectPtr& plugin,
+                         const FB::BrowserHostPtr& host)
+: m_plugin(plugin), m_host(host) {
     registerMethod("echo",      make_method(this, &hiKinectAPI::echo));
-    registerMethod("testEvent", make_method(this, &hiKinectAPI::testEvent));
+    registerMethod("contextInit", make_method(this, &hiKinectAPI::contextInit));
+    registerMethod("contextShutdown",
+                   make_method(this, &hiKinectAPI::contextShutdown));
+    registerMethod("contextWaitAndUpdateAll",
+                   make_method(this, &hiKinectAPI::contextWaitAndUpdateAll));
+    registerMethod("getSkeleton", make_method(this, &hiKinectAPI::getSkeleton));
 
     // Read-write property
     registerProperty("testString",
@@ -92,8 +101,70 @@ FB::variant hiKinectAPI::echo(const FB::variant& msg)
     return msg;
 }
 
-void hiKinectAPI::testEvent(const FB::variant& var)
-{
-    fire_fired(var, true, 1);
+FB::VariantMap hiKinectAPI::getPosition(XnSkeletonJoint joint, FB::VariantMap &map){
+  XnSkeletonJointPosition pos;
+  hiKinectPtr plugin = getPlugin();
+  plugin->getPosition(joint, pos);
+  map["x"] = pos.position.X;
+  map["y"] = pos.position.Y;
+  map["z"] = pos.position.Z;
+  if (joint == XN_SKEL_HEAD) {
+    FBLOG_INFO("getPosition", pos.position.X);
+    FBLOG_INFO("getPosition", pos.position.Y);
+    FBLOG_INFO("getPosition", pos.position.Z);
+  }
+  return map;
 }
 
+FB::VariantMap hiKinectAPI::getSkeleton(){
+  hiKinectPtr plugin = getPlugin();
+  plugin->contextWaitAndUpdateAll();
+  FB::VariantMap map, head, neck, torso, waist;
+  FB::VariantMap l_collar, l_shoulder, l_elbow, l_wrist, l_hand, l_fingertip;
+  FB::VariantMap r_collar, r_shoulder, r_elbow, r_wrist, r_hand, r_fingertip;
+  FB::VariantMap l_hip, l_knee, l_ankle, l_foot;
+  FB::VariantMap r_hip, r_knee, r_ankle, r_foot;
+  map["XN_SKEL_HEAD"] = getPosition(XN_SKEL_HEAD, head);
+  map["XN_SKEL_NECK"] = getPosition(XN_SKEL_NECK, neck);
+  map["XN_SKEL_TORSO"] = getPosition(XN_SKEL_TORSO, torso);
+  map["XN_SKEL_WAIST"] = getPosition(XN_SKEL_WAIST, waist);
+  map["XN_SKEL_LEFT_COLLAR"] = getPosition(XN_SKEL_LEFT_COLLAR, l_collar);
+  map["XN_SKEL_LEFT_SHOULDER"] = getPosition(XN_SKEL_LEFT_SHOULDER, l_shoulder);
+  map["XN_SKEL_LEFT_ELBOW"] = getPosition(XN_SKEL_LEFT_ELBOW, l_elbow);
+  map["XN_SKEL_LEFT_WRIST"] = getPosition(XN_SKEL_LEFT_WRIST, l_wrist);
+  map["XN_SKEL_LEFT_HAND"] = getPosition(XN_SKEL_LEFT_HAND, l_hand);
+  map["XN_SKEL_LEFT_FINGERTIP"] = getPosition(XN_SKEL_LEFT_FINGERTIP, l_fingertip);
+  map["XN_SKEL_RIGHT_COLLAR"] = getPosition(XN_SKEL_RIGHT_COLLAR, r_collar);
+  map["XN_SKEL_RIGHT_SHOULDER"] = getPosition(XN_SKEL_RIGHT_SHOULDER, r_shoulder);
+  map["XN_SKEL_RIGHT_ELBOW"] = getPosition(XN_SKEL_RIGHT_ELBOW, r_elbow);
+  map["XN_SKEL_RIGHT_WRIST"] = getPosition(XN_SKEL_RIGHT_WRIST, r_wrist);
+  map["XN_SKEL_RIGHT_HAND"] = getPosition(XN_SKEL_RIGHT_HAND, r_hand);
+  map["XN_SKEL_RIGHT_FINGERTIP"] = getPosition(XN_SKEL_RIGHT_FINGERTIP, r_fingertip);
+  map["XN_SKEL_LEFT_HIP"] = getPosition(XN_SKEL_LEFT_HIP, l_hip);
+  map["XN_SKEL_LEFT_KNEE"] = getPosition(XN_SKEL_LEFT_KNEE, l_knee);
+  map["XN_SKEL_LEFT_ANKLE"] = getPosition(XN_SKEL_LEFT_ANKLE, l_ankle);
+  map["XN_SKEL_LEFT_FOOT"] = getPosition(XN_SKEL_LEFT_FOOT, l_foot);
+  map["XN_SKEL_RIGHT_HIP"] = getPosition(XN_SKEL_RIGHT_HIP, r_hip);
+  map["XN_SKEL_RIGHT_KNEE"] = getPosition(XN_SKEL_RIGHT_KNEE, r_knee);
+  map["XN_SKEL_RIGHT_ANKLE"] = getPosition(XN_SKEL_RIGHT_ANKLE, r_ankle);
+  map["XN_SKEL_RIGHT_FOOT"] = getPosition(XN_SKEL_RIGHT_FOOT, r_foot);
+  return map;
+}
+
+int hiKinectAPI::contextInit() {
+  XnStatus nRetVal = getPlugin()->contextInit();
+  if (nRetVal == XN_STATUS_OK){
+    return 1;
+  }else{
+    return -1;
+  }
+  return 0;
+}
+
+void hiKinectAPI::contextShutdown(){
+  getPlugin()->contextShutdown();
+}
+
+void hiKinectAPI::contextWaitAndUpdateAll(){
+  getPlugin()->contextWaitAndUpdateAll();
+}

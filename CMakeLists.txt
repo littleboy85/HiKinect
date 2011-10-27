@@ -18,6 +18,8 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 include_directories(${PLUGIN_INCLUDE_DIRS})
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/openni)
+
 # Generated files are stored in ${GENERATED} by the project configuration
 SET_SOURCE_FILES_PROPERTIES(
     ${GENERATED}

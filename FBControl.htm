@@ -1,0 +1,135 @@
+<!--
+    Auto-generated test-site
+-->
+<html>
+<head>
+<title>test page for object fbcontrol</title>
+</head>
+    <script type="text/javascript">
+        var plugin;
+        var shouldQuit = false;
+        var canvas;
+        var context;
+        var sk;
+
+        function plugin0()
+        {
+            return document.getElementById('plugin0');
+        }
+
+        function addEvent(obj, name, func)
+        {
+            if (window.addEventListener) {
+                obj.addEventListener(name, func, false); 
+            } else {
+                obj.attachEvent("on"+name, func);
+            }
+        }
+        
+        function load()
+        {
+            addEvent(plugin0(), 'fired', function(x){
+                alert('onfired() from load(): '+x)
+            });
+        }
+
+        function moveTo(joint){
+            context.moveTo(sk[joint].x/2+500, 500-sk[joint].y/2);
+        }
+
+        function lineTo(joint){
+            context.lineTo(sk[joint].x/2+500, 500-sk[joint].y/2);
+        }
+
+        function fillText(str, joint){
+            context.fillText(str, sk[joint].x/2+520, 500-sk[joint].y/2)
+        }
+
+        function update(){
+            if (shouldQuit) return;
+            sk = plugin.getSkeleton();
+            context.clearRect(0,0,1000, 1000);
+            context.beginPath();
+            fillText('h', 'XN_SKEL_HEAD');
+            fillText('n', 'XN_SKEL_NECK')
+            fillText('lc', 'XN_SKEL_LEFT_COLLAR')
+            fillText('ls', 'XN_SKEL_LEFT_SHOULDER');
+            fillText('le', 'XN_SKEL_LEFT_ELBOW');
+            //fillText('lw', 'XN_SKEL_LEFT_WRIST');
+            fillText('lha', 'XN_SKEL_LEFT_HAND');
+            fillText('lf', 'XN_SKEL_LEFT_FINGERTIP');
+            fillText('rc', 'XN_SKEL_RIGHT_COLLAR')
+            fillText('rs', 'XN_SKEL_RIGHT_SHOULDER');
+            fillText('re', 'XN_SKEL_RIGHT_ELBOW');
+            fillText('rw', 'XN_SKEL_RIGHT_WRIST');
+            fillText('rha', 'XN_SKEL_RIGHT_HAND');
+            fillText('rf', 'XN_SKEL_RIGHT_FINGERTIP');
+            fillText('t', 'XN_SKEL_TORSO');
+            fillText('w', 'XN_SKEL_WAIST');
+            fillText('lhi', 'XN_SKEL_LEFT_HIP');
+            fillText('lk', 'XN_SKEL_LEFT_KNEE');
+            fillText('la', 'XN_SKEL_LEFT_ANKLE');
+            fillText('lf', 'XN_SKEL_LEFT_FOOT');
+            fillText('rhi', 'XN_SKEL_RIGHT_HIP');
+            fillText('rk', 'XN_SKEL_RIGHT_KNEE');
+            //fillText('ra', 'XN_SKEL_RIGHT_ANKLE');
+            fillText('rf', 'XN_SKEL_RIGHT_FOOT');
+
+            moveTo('XN_SKEL_HEAD');
+            lineTo('XN_SKEL_NECK')
+            //lineTo('XN_SKEL_LEFT_COLLAR')
+            lineTo('XN_SKEL_LEFT_SHOULDER');
+            lineTo('XN_SKEL_LEFT_ELBOW');
+            //lineTo('XN_SKEL_LEFT_WRIST');
+            lineTo('XN_SKEL_LEFT_HAND');
+            //lineTo('XN_SKEL_LEFT_FINGERTIP');
+            moveTo('XN_SKEL_NECK');
+            //lineTo('XN_SKEL_RIGHT_COLLAR')
+            lineTo('XN_SKEL_RIGHT_SHOULDER');
+            lineTo('XN_SKEL_RIGHT_ELBOW');
+            //lineTo('XN_SKEL_RIGHT_WRIST');
+            lineTo('XN_SKEL_RIGHT_HAND');
+            //lineTo('XN_SKEL_RIGHT_FINGERTIP');
+            moveTo('XN_SKEL_NECK');
+            lineTo('XN_SKEL_TORSO');
+            lineTo('XN_SKEL_WAIST');
+            lineTo('XN_SKEL_LEFT_HIP');
+            lineTo('XN_SKEL_LEFT_KNEE');
+            //lineTo('XN_SKEL_LEFT_ANKLE');
+            lineTo('XN_SKEL_LEFT_FOOT');
+            moveTo('XN_SKEL_WAIST');
+            lineTo('XN_SKEL_RIGHT_HIP');
+            lineTo('XN_SKEL_RIGHT_KNEE');
+            //lineTo('XN_SKEL_RIGHT_ANKLE');
+            lineTo('XN_SKEL_RIGHT_FOOT');
+            context.stroke();
+            setTimeout('update()', 300);
+        }
+        function pluginLoaded() {
+            plugin = plugin0();
+            canvas = document.getElementById("myCanvas");
+            context = canvas.getContext("2d");
+
+            console.log(plugin.contextInit());
+            shouldQuit = false;
+            update();
+        }
+        
+        function quit(){
+            shouldQuit = true;
+        }
+        
+        function pluginValid()
+        {
+            alert(plugin().valid);
+        }
+    </script>
+<body onload="load()">
+<object id="plugin0" type="application/x-hikinect" width="0" height="0">
+    <param name="onload" value="pluginLoaded" />
+</object><br />
+<canvas id="myCanvas" height="1000", width="1000"></canvas>
+
+<a href="#" onclick="javascript:pluginValid()">alert plugin valid</a> <br />
+</body>
+</html>
