@@ -92,18 +92,18 @@
             //lineTo('XN_SKEL_RIGHT_FINGERTIP');
             moveTo('XN_SKEL_NECK');
             lineTo('XN_SKEL_TORSO');
-            lineTo('XN_SKEL_WAIST');
+            //lineTo('XN_SKEL_WAIST');
             lineTo('XN_SKEL_LEFT_HIP');
             lineTo('XN_SKEL_LEFT_KNEE');
             //lineTo('XN_SKEL_LEFT_ANKLE');
             lineTo('XN_SKEL_LEFT_FOOT');
-            moveTo('XN_SKEL_WAIST');
+            moveTo('XN_SKEL_TORSO');
             lineTo('XN_SKEL_RIGHT_HIP');
             lineTo('XN_SKEL_RIGHT_KNEE');
             //lineTo('XN_SKEL_RIGHT_ANKLE');
             lineTo('XN_SKEL_RIGHT_FOOT');
             context.stroke();
-            setTimeout('update()', 300);
+            setTimeout('update()', 10);
         }
         function pluginLoaded() {
             plugin = plugin0();
@@ -127,7 +127,8 @@
 <body onload="load()">
 <object id="plugin0" type="application/x-hikinect" width="0" height="0">
     <param name="onload" value="pluginLoaded" />
-</object><br />
+</object>
+<br />
 <canvas id="myCanvas" height="1000", width="1000"></canvas>
 
 <a href="#" onclick="javascript:pluginValid()">alert plugin valid</a> <br />

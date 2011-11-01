@@ -96,31 +96,6 @@ void hiKinect::StaticDeinitialize()
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
 hiKinect::hiKinect() {
-  /*
-  */
-  // TODO: check error code
-  /*
-  while (TRUE) {
-    // Update to next frame
-    nRetVal = context.WaitAndUpdateAll();
-    // TODO: check error code
-    // Extract head position of each tracked user 
-    XnUserID aUsers[15];
-    XnUInt16 nUsers = 15;
-    g_UserGenerator.GetUsers(aUsers, nUsers);
-    for (int i = 0; i < nUsers; ++i) {
-      if (g_UserGenerator.GetSkeletonCap().IsTracking(aUsers[i])) {
-        XnSkeletonJointPosition Head;
-        g_UserGenerator.GetSkeletonCap()
-            .GetSkeletonJointPosition(aUsers[i], XN_SKEL_HEAD, Head);
-        printf("%d: (%f,%f,%f) [%f]\n",
-               aUsers[i], Head.position.X,
-               Head.position.Y, Head.position.Z, Head.fConfidence);
-      }
-    }
-  }
-  */
-  // Clean up
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,8 +107,9 @@ hiKinect::~hiKinect()
     // root object) and tell the host to free the retained JSAPI objects then
     // unless you are holding another shared_ptr reference to your JSAPI object
     // they will be released here.
-    releaseRootJSAPI();
-    m_host->freeRetainedObjects();
+  contextShutdown() {
+  releaseRootJSAPI();
+  m_host->freeRetainedObjects();
 }
 
 void hiKinect::onPluginReady()
