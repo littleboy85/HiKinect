@@ -107,7 +107,7 @@ hiKinect::~hiKinect()
     // root object) and tell the host to free the retained JSAPI objects then
     // unless you are holding another shared_ptr reference to your JSAPI object
     // they will be released here.
-  contextShutdown() {
+  contextShutdown();
   releaseRootJSAPI();
   m_host->freeRetainedObjects();
 }

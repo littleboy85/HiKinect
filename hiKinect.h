@@ -19,10 +19,9 @@
 
 FB_FORWARD_PTR(hiKinect)
 class hiKinect : public FB::PluginCore {
- private:
-  xn::Context context;
 
  public:
+  xn::Context context;
   static void StaticInitialize();
   static void StaticDeinitialize();
 
