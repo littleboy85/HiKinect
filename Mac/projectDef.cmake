@@ -90,9 +90,9 @@ endfunction()
 
 
 # Build the path to the plugin binary
-#get_target_property(LIBDIR ${PROJECT_NAME} LIBRARY_OUTPUT_DIRECTORY)
-#get_target_property(ONAME ${PROJECT_NAME} OUTPUT_NAME)
-#set(PBIN "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PROJECT_NAME}.plugin")
-#changeLoaderPath(../../Bin/Release/libOpenNI.dylib ${CMAKE_CURRENT_SOURCE_DIR}/Mac libOpenNI.dylib ${PBIN} ${PBIN}/Contents/MacOS/${PROJECT_NAME})
-#changeLoaderPath(/usr/local/lib/libusb-1.0.0.dylib ${CMAKE_CURRENT_SOURCE_DIR}/Mac libusb-1.0.0.dylib ${PBIN} ${PBIN}/Contents/Frameworks/libOpenNI.dylib)
+get_target_property(LIBDIR ${PROJECT_NAME} LIBRARY_OUTPUT_DIRECTORY)
+get_target_property(ONAME ${PROJECT_NAME} OUTPUT_NAME)
+set(PBIN "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PROJECT_NAME}.plugin")
+changeLoaderPath(../../Bin/Release/libOpenNI.dylib ${CMAKE_CURRENT_SOURCE_DIR}/Mac libOpenNI.dylib ${PBIN} ${PBIN}/Contents/MacOS/${PROJECT_NAME})
+changeLoaderPath(/usr/local/lib/libusb-1.0.0.dylib ${CMAKE_CURRENT_SOURCE_DIR}/Mac libusb-1.0.0.dylib ${PBIN} ${PBIN}/Contents/Frameworks/libOpenNI.dylib)
 

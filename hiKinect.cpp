@@ -9,6 +9,7 @@
 
 #include "hiKinectAPI.h"
 
+#include "variant_list.h"
 #include "hiKinect.h"
 
 #define POSE_TO_USE "Psi"
@@ -27,6 +28,7 @@ User_NewUser(xn::UserGenerator& generator, XnUserID nId, void* pCookie) {
     }
   }
   g_UserGenerator.GetPoseDetectionCap().StartPoseDetection(POSE_TO_USE, nId);
+  (*((hiKinect *)pCookie)->callbackPtr)->InvokeAsync("", FB::variant_list_of("NEW_USER"));
 }
 
 void XN_CALLBACK_TYPE
@@ -39,11 +41,13 @@ Pose_Detected(xn::PoseDetectionCapability& pose, const XnChar* strPose,
   FBLOG_INFO("Pose_Detected()", "Pose_Detected");
   g_UserGenerator.GetPoseDetectionCap().StopPoseDetection(nId);
   g_UserGenerator.GetSkeletonCap().RequestCalibration(nId, TRUE);
+  (*((hiKinect *)pCookie)->callbackPtr)->InvokeAsync("", FB::variant_list_of("POSE_DETECTED"));
 }
 
 void XN_CALLBACK_TYPE
 Calibration_Start(xn::SkeletonCapability& capability, XnUserID nId,
                   void* pCookie) {
+  (*((hiKinect *)pCookie)->callbackPtr)->InvokeAsync("", FB::variant_list_of("START_CALIBRATION"));
   printf("Starting calibration for user %d\n", nId);
   FBLOG_INFO("Calibration_Start", "Starting calibration");
 }
@@ -55,11 +59,13 @@ Calibration_End(xn::SkeletonCapability& capability, XnUserID nId,
     printf("User calibrated\n");
     FBLOG_INFO("Calibration_End", "User calibrated");
     g_UserGenerator.GetSkeletonCap().StartTracking(nId);
+    (*((hiKinect *)pCookie)->callbackPtr)->InvokeAsync("", FB::variant_list_of("CALIBRATION_SUCCESS"));
   } else {
     printf("Failed to calibrate user %d\n", nId);
     FBLOG_INFO("Calibration_End", "Failed to calibrate user");
     g_UserGenerator.GetPoseDetectionCap().StartPoseDetection(POSE_TO_USE,
                                                              nId);
+    (*((hiKinect *)pCookie)->callbackPtr)->InvokeAsync("", FB::variant_list_of("CALIBRATION_FAIL"));
   }
 }
 
@@ -188,29 +194,37 @@ XnUserID hiKinect::getTrackedUserID(){
   return 0;
 }
 
-XnStatus hiKinect::contextInit() {
+XnStatus hiKinect::init(const FB::JSObjectPtr &cb){
   XnStatus nRetVal = XN_STATUS_OK;
+  callbackPtr = &cb;
   nRetVal = context.Init();
+  (*callbackPtr)->InvokeAsync("", FB::variant_list_of("CONTEXT_INIT")
+                        (nRetVal)(xnGetStatusString(nRetVal)));
   if (nRetVal != XN_STATUS_OK) return nRetVal;
+
   // Create the user generator
   nRetVal = g_UserGenerator.Create(context);
+  (*callbackPtr)->InvokeAsync("", FB::variant_list_of("USERGENERATOR_CREATE")
+                        (nRetVal)(xnGetStatusString(nRetVal)));
   if (nRetVal != XN_STATUS_OK) return nRetVal;
   XnCallbackHandle h1, h2, h3;
-  g_UserGenerator.RegisterUserCallbacks(User_NewUser, User_LostUser, NULL, h1);
-
+  g_UserGenerator.RegisterUserCallbacks(User_NewUser, User_LostUser, this, h1);
   g_UserGenerator.GetPoseDetectionCap()
-      .RegisterToPoseCallbacks(Pose_Detected, NULL, NULL, h2);
+      .RegisterToPoseCallbacks(Pose_Detected, NULL, this, h2);
   g_UserGenerator.GetSkeletonCap()
       .RegisterCalibrationCallbacks(Calibration_Start, Calibration_End,
-                                    NULL, h3);
+                                    this, h3);
   // Set the profile￼
   g_UserGenerator.GetSkeletonCap().SetSkeletonProfile(XN_SKEL_PROFILE_ALL);
+  FBLOG_INFO("contextInit", "Init finish");
   // Start generating
   nRetVal = context.StartGeneratingAll();
+  (*callbackPtr)->InvokeAsync("", FB::variant_list_of("START_GENERATING")
+                        (nRetVal)(xnGetStatusString(nRetVal)));
+  if (nRetVal != XN_STATUS_OK) return nRetVal;
   while (getTrackedUserID() == 0){
     contextWaitAndUpdateAll();
   }
-  FBLOG_INFO("contextInit", "Init finish");
   return nRetVal;
 }
 

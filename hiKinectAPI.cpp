@@ -28,12 +28,12 @@ hiKinectAPI::hiKinectAPI(const hiKinectPtr& plugin,
                          const FB::BrowserHostPtr& host)
 : m_plugin(plugin), m_host(host) {
     registerMethod("echo",      make_method(this, &hiKinectAPI::echo));
-    registerMethod("contextInit", make_method(this, &hiKinectAPI::contextInit));
     registerMethod("contextShutdown",
                    make_method(this, &hiKinectAPI::contextShutdown));
     registerMethod("contextWaitAndUpdateAll",
                    make_method(this, &hiKinectAPI::contextWaitAndUpdateAll));
     registerMethod("getSkeleton", make_method(this, &hiKinectAPI::getSkeleton));
+    registerMethod("init", make_method(this, &hiKinectAPI::init));
 
     // Read-write property
     registerProperty("testString",
@@ -151,14 +151,13 @@ FB::VariantMap hiKinectAPI::getSkeleton(){
   return map;
 }
 
-int hiKinectAPI::contextInit() {
-  XnStatus nRetVal = getPlugin()->contextInit();
-  if (nRetVal == XN_STATUS_OK){
-    return 1;
-  }else{
-    return -1;
-  }
-  return 0;
+bool hiKinectAPI::init(const FB::JSObjectPtr &callback) {
+  boost::thread t(boost::bind(&hiKinectAPI::init_thread, this, callback));
+  return true;
+}
+
+void hiKinectAPI::init_thread(const FB::JSObjectPtr &callback) {
+  getPlugin()->init(callback);
 }
 
 void hiKinectAPI::contextShutdown(){

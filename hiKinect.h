@@ -19,9 +19,10 @@
 
 FB_FORWARD_PTR(hiKinect)
 class hiKinect : public FB::PluginCore {
-
- public:
+ private:
   xn::Context context;
+ public:
+  const FB::JSObjectPtr *callbackPtr;
   static void StaticInitialize();
   static void StaticDeinitialize();
 
@@ -55,7 +56,7 @@ class hiKinect : public FB::PluginCore {
   virtual bool onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *);
   virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *);
   /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
-  XnStatus contextInit();
+  XnStatus init(const FB::JSObjectPtr &callback);
   XnUserID getTrackedUserID();
   void contextShutdown();
   void contextWaitAndUpdateAll();

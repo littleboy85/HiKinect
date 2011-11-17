@@ -1,0 +1,67 @@
+<!DOCTYPE html> 
+<html xmlns:fb="https://www.facebook.com/2008/fbml">
+  <head> 
+    <title> 
+		Example
+    </title> 
+<style>
+#kinect_setup_container {
+                    background: url('loading.gif') no-repeat center center;
+                    width: 652px;
+                    height: 480px;
+                }
+                #kinect_message {
+                    font-size: 35px;
+                }</style>	
+  </head> 
+<body> 
+<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+
+	<canvas id="game" width=652 height=480>	
+	</canvas>
+<embed id="kinect" type="application/x-hikinect">
+<script src="hiKinect.js"></script>
+<script type="text/javascript">
+var kinect = null;
+var can=document.getElementById('game');
+var context=can.getContext("2d");
+//  function onMove(sk){
+    function onMove(x,y){
+    
+//  var coor = this_.getXY(sk['XN_SKEL_TORSO']);
+//drawSkeleton(sk,true);
+    context.clearRect(0, 0, 652, 480);
+    context.beginPath();
+    context.moveTo(x,y);
+    context.lineTo(x+0, y+100); 
+    context.lineTo(x+100, y+100); 
+    context.lineTo(x+100, y); 
+    context.lineTo(x, y); 
+    context.stroke();
+    }
+
+    function onStart() {
+        
+    }
+
+   $(document).ready(function(){
+    if (!kinect) {
+            kinect = new Kinect('kinect', can
+, {
+                width: 652,
+                height:480,
+                human_width: 600,
+                human_height: 800,
+                start_x: 326,
+                start_y: 240
+            });
+        }
+        kinect.init(onStart, onMove);
+   
+   });
+       
+    
+</script>
+
+</body> 
+</html>

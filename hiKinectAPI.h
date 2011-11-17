@@ -36,7 +36,8 @@ class hiKinectAPI : public FB::JSAPIAuto {
   FB_JSAPI_EVENT(echo, 2, (const FB::variant&, const int));
   FB_JSAPI_EVENT(notify, 0, ());
 
-  int contextInit();
+  bool init(const FB::JSObjectPtr &callback);
+
   void contextShutdown();
   void contextWaitAndUpdateAll();
   FB::VariantMap getPosition(XnSkeletonJoint joint, FB::VariantMap &map);
@@ -46,6 +47,7 @@ class hiKinectAPI : public FB::JSAPIAuto {
   FB::BrowserHostPtr m_host;
 
   std::string m_testString;
+  void init_thread(const FB::JSObjectPtr &callback);
 };
 
 #endif // H_hiKinectAPI
